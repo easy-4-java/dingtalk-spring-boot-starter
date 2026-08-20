@@ -1,15 +1,13 @@
 package com.dingtalk.spring.boot;
 
-import com.dingtalk.spring.boot.property.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
- * Tests for {@link DingTalkProperties} and property classes.
+ * Tests for {@link DingTalkProperties} and its nested config POJOs.
  *
  * @author <a href="https://github.com/loong10k">Loong Wan</a>
  */
@@ -26,30 +24,30 @@ class DingTalkPropertiesTest {
         props.setCorpId("corp1");
         props.setCorpSecret("secret1");
 
-        DingTalkCorpAppProperties corpApp = new DingTalkCorpAppProperties();
+        DingTalkProperties.CorpApp corpApp = new DingTalkProperties.CorpApp();
         corpApp.setAgentId("a1");
         corpApp.setAppKey("k1");
         corpApp.setAppSecret("s1");
         props.setCorpApps(Arrays.asList(corpApp));
 
-        DingTalkPersonalMiniAppProperties miniApp = new DingTalkPersonalMiniAppProperties();
+        DingTalkProperties.PersonalMiniApp miniApp = new DingTalkProperties.PersonalMiniApp();
         miniApp.setAppId("ma1");
         miniApp.setAppSecret("ms1");
         props.setApps(Arrays.asList(miniApp));
 
-        DingTalkSuiteProperties suite = new DingTalkSuiteProperties();
+        DingTalkProperties.Suite suite = new DingTalkProperties.Suite();
         suite.setSuiteId("sid1");
         suite.setAppId("aid1");
         suite.setSuiteKey("sk1");
         suite.setSuiteSecret("ss1");
         props.setSuites(Arrays.asList(suite));
 
-        DingTalkLoginProperties login = new DingTalkLoginProperties();
+        DingTalkProperties.Login login = new DingTalkProperties.Login();
         login.setAppId("la1");
         login.setAppSecret("ls1");
         props.setLogins(Arrays.asList(login));
 
-        DingTalkRobotProperties robot = new DingTalkRobotProperties();
+        DingTalkProperties.Robot robot = new DingTalkProperties.Robot();
         robot.setRobotId("rid1");
         robot.setAccessToken("at1");
         robot.setSecretToken("st1");
@@ -65,8 +63,8 @@ class DingTalkPropertiesTest {
     }
 
     @Test
-    void dingTalkCorpAppProperties_settersAndGetters() {
-        DingTalkCorpAppProperties props = new DingTalkCorpAppProperties();
+    void dingTalkCorpApp_settersAndGetters() {
+        DingTalkProperties.CorpApp props = new DingTalkProperties.CorpApp();
         props.setAgentId("a1");
         props.setAppKey("k1");
         props.setAppSecret("s1");
@@ -77,8 +75,8 @@ class DingTalkPropertiesTest {
     }
 
     @Test
-    void dingTalkPersonalMiniAppProperties_settersAndGetters() {
-        DingTalkPersonalMiniAppProperties props = new DingTalkPersonalMiniAppProperties();
+    void dingTalkPersonalMiniApp_settersAndGetters() {
+        DingTalkProperties.PersonalMiniApp props = new DingTalkProperties.PersonalMiniApp();
         props.setAppId("a1");
         props.setAppSecret("s1");
         assertThat(props.getAppId()).isEqualTo("a1");
@@ -87,8 +85,8 @@ class DingTalkPropertiesTest {
     }
 
     @Test
-    void dingTalkSuiteProperties_settersAndGetters() {
-        DingTalkSuiteProperties props = new DingTalkSuiteProperties();
+    void dingTalkSuite_settersAndGetters() {
+        DingTalkProperties.Suite props = new DingTalkProperties.Suite();
         props.setSuiteId("sid1");
         props.setAppId("aid1");
         props.setSuiteKey("sk1");
@@ -101,8 +99,8 @@ class DingTalkPropertiesTest {
     }
 
     @Test
-    void dingTalkLoginProperties_settersAndGetters() {
-        DingTalkLoginProperties props = new DingTalkLoginProperties();
+    void dingTalkLogin_settersAndGetters() {
+        DingTalkProperties.Login props = new DingTalkProperties.Login();
         props.setAppId("a1");
         props.setAppSecret("s1");
         assertThat(props.getAppId()).isEqualTo("a1");
@@ -111,8 +109,8 @@ class DingTalkPropertiesTest {
     }
 
     @Test
-    void dingTalkRobotProperties_settersAndGetters() {
-        DingTalkRobotProperties props = new DingTalkRobotProperties();
+    void dingTalkRobot_settersAndGetters() {
+        DingTalkProperties.Robot props = new DingTalkProperties.Robot();
         props.setRobotId("r1");
         props.setAccessToken("at1");
         props.setSecretToken("st1");

@@ -1,6 +1,6 @@
 package com.dingtalk.spring.boot;
 
-import com.dingtalk.spring.boot.property.*;
+import com.dingtalk.spring.boot.config.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -27,7 +27,8 @@ class DingTalkAutoConfigurationTest {
             assertThat(context).hasSingleBean(DefaultDingTalkConfigProvider.class);
             assertThat(context).hasSingleBean(DingTalkAccessTokenProvider.class);
             assertThat(context).hasSingleBean(DefaultDingTalkAccessTokenProvider.class);
-            assertThat(context).hasSingleBean(DingTalkTemplate.class);
+            assertThat(context).hasBean("dingTalkTemplate");
+            assertThat(context).hasSingleBean(SpringDingTalkTemplate.class);
         });
     }
 
@@ -52,17 +53,17 @@ class DingTalkAutoConfigurationTest {
                 .withBean("customConfigProvider", DingTalkConfigProvider.class,
                         () -> new DingTalkConfigProvider() {
                             @Override
-                            public DingTalkProperties getDingTalkProperties(String corpId) { return null; }
+                            public DingTalkConfig getDingTalkConfig(String corpId) { return null; }
                             @Override
-                            public DingTalkCorpAppProperties getDingTalkCorpAppProperties(String corpId, String agentId) { return null; }
+                            public DingTalkCorpAppConfig getDingTalkCorpAppConfig(String corpId, String agentId) { return null; }
                             @Override
-                            public DingTalkPersonalMiniAppProperties getDingTalkPersonalMiniAppProperties(String corpId, String appId) { return null; }
+                            public DingTalkPersonalMiniAppConfig getDingTalkPersonalMiniAppConfig(String corpId, String appId) { return null; }
                             @Override
-                            public DingTalkSuiteProperties getDingTalkSuiteProperties(String corpId, String suiteId) { return null; }
+                            public DingTalkSuiteConfig getDingTalkSuiteConfig(String corpId, String suiteId) { return null; }
                             @Override
-                            public DingTalkLoginProperties getDingTalkLoginProperties(String corpId, String appId) { return null; }
+                            public DingTalkLoginConfig getDingTalkLoginConfig(String corpId, String appId) { return null; }
                             @Override
-                            public DingTalkRobotProperties getDingTalkRobotProperties(String corpId, String robotId) { return null; }
+                            public DingTalkRobotConfig getDingTalkRobotConfig(String corpId, String robotId) { return null; }
                             @Override
                             public boolean hasAppKey(String appKey) { return false; }
                             @Override
