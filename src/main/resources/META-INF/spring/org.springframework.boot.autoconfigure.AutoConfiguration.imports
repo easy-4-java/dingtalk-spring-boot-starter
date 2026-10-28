@@ -1,1 +1,1 @@
-com.dingtalk.spring.boot.DingTalkAutoConfiguration
+io.github.easy4j.dingtalk.spring.boot.autoconfigure.DingTalkAutoConfiguration

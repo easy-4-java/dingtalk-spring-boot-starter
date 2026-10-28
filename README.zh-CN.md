@@ -58,18 +58,22 @@
 
 ## 4. 自动装配
 
-Starter 自动装配以下 Bean：
+Starter 只注册**一张**服务图：调用方统一通过复合接口 `DingTalkService`（由 `dingtalk-sdk-extension` 提供）访问能力。6 个域 Operation（account / SNS / SSO / JSAPI / robot / user）通过该服务进入，**不**会在 Spring 上下文里作为独立 Bean 出现。
 
 | Bean | 条件 | 缺失时行为 |
 |---|---|---|
-| `DingTalkConfigProvider` | classpath + property | 不创建 |
-| `DingTalkAccessTokenProvider` | classpath + property | 不创建 |
-| `DingTalkTemplate` | classpath + property | 不创建 |
+| `DingTalkConfig` | `@ConditionalOnMissingBean` | 用户覆盖则不创建 |
+| `DingTalkConfigProvider` | `@ConditionalOnMissingBean` | 用户覆盖则不创建 |
+| `DingTalkConfigStorage` | `@ConditionalOnMissingBean` | 用户覆盖则不创建 |
+| `DingTalkAccessTokenProvider` | `@ConditionalOnMissingBean` | 用户覆盖则不创建 |
+| `DingTalkService` | `@ConditionalOnMissingBean(DingTalkService.class)` | 用户自定义 service bean 优先 |
+
+> 所有 SDK 域类型（`DingTalkService`、`DingTalkConfigStorage`、`DingTalkAccountOperations` 等）都来自纯 SDK 构件 `io.github.easy4j:dingtalk-sdk-extension`，本 Starter 只做「薄适配」。
 
 自动装配注册：
 
-- `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`（Spring Boot 2.7+ / 3.x / 4.x）
-- `META-INF/spring.factories`（Spring Boot 2.x 传统方式）
+- `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`（Spring Boot 2.7+ / 3.x / 4.x 标准）
+- `META-INF/spring.factories`（Spring Boot 2.x 兼容，暂保留过渡期）
 
 ## 5. 引入依赖
 
@@ -98,7 +102,11 @@ dingtalk:
 
 ### 6.3 使用 Bean
 
+统一注入单例 `DingTalkService` 复合门面，所有域操作从服务上取：
+
 ```java
+import io.github.easy4j.dingtalk.service.DingTalkService;
+
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) {
@@ -107,12 +115,19 @@ public class Application {
 }
 ```
 
-在业务代码中注入自动装配的 Bean：
-
 ```java
 @Autowired
-private DingTalkConfigProvider dingTalkConfigProvider;
+private DingTalkService dingTalkService;
 ```
+
+Operation 子门面从服务上获取：
+
+```java
+String token = dingTalkService.getAccessToken(corpId, appKey);
+dingTalkService.opsForRobot().sendText(corpId, appKey, webhookAccessToken, secret, "hello");
+```
+
+如需自构建图中任一环，只需提供同类型的自定义 `@Bean`，自动装配会通过 `@ConditionalOnMissingBean` 自动退避。
 
 ## 7. 配置参考
 

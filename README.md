@@ -58,18 +58,27 @@
 
 ## 4. Auto-configuration
 
-The starter auto-configures the following beans:
+The starter auto-configures exactly **one** service facade graph so callers go through the
+`DingTalkService` composite interface (defined in `dingtalk-sdk-extension`).  The six
+operation sub-facades (account / SNS / SSO / JSAPI / robot / user) are accessed through
+the service — they are **not** registered as individual Spring beans.
 
 | Bean | Condition | Missing Behavior |
 |---|---|---|
-| `DingTalkConfigProvider` | classpath + property | not created |
-| `DingTalkAccessTokenProvider` | classpath + property | not created |
-| `DingTalkTemplate` | classpath + property | not created |
+| `DingTalkConfig` | Spring `@ConditionalOnMissingBean` | not created if user overrides |
+| `DingTalkConfigProvider` | Spring `@ConditionalOnMissingBean` | not created if user overrides |
+| `DingTalkConfigStorage` | Spring `@ConditionalOnMissingBean` | not created if user overrides |
+| `DingTalkAccessTokenProvider` | Spring `@ConditionalOnMissingBean` | not created if user overrides |
+| `DingTalkService` | Spring `@ConditionalOnMissingBean(DingTalkService.class)` | user-provided service bean wins |
+
+> All SDK domain types (`DingTalkService`, `DingTalkConfigStorage`,
+> `DingTalkAccountOperations`, etc.) come from the pure-SDK artifact
+> `io.github.easy4j:dingtalk-sdk-extension` — the starter is a **thin adapter only**.
 
 Auto-configuration registration:
 
 - `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (Spring Boot 2.7+ / 3.x / 4.x)
-- `META-INF/spring.factories` (Spring Boot 2.x legacy)
+- `META-INF/spring.factories` (Spring Boot 2.x legacy, kept for transient compatibility)
 
 ## 5. Dependency
 
@@ -98,7 +107,11 @@ dingtalk:
 
 ### 6.3 Use the bean
 
+Inject the single `DingTalkService` facade (domain operations live on it):
+
 ```java
+import io.github.easy4j.dingtalk.service.DingTalkService;
+
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) {
@@ -107,12 +120,20 @@ public class Application {
 }
 ```
 
-Then inject the auto-configured bean in your code:
-
 ```java
 @Autowired
-private DingTalkConfigProvider dingTalkConfigProvider;
+private DingTalkService dingTalkService;
 ```
+
+Operation sub-facades are accessed via the service:
+
+```java
+String token = dingTalkService.getAccessToken(corpId, appKey);
+dingTalkService.opsForRobot().sendText(corpId, appKey, webhookAccessToken, secret, "hello");
+```
+
+If you want to customize any link in the graph, provide your own `@Bean` of the
+matching type and the auto-configuration will back off via `@ConditionalOnMissingBean`.
 
 ## 7. Configuration Reference
 

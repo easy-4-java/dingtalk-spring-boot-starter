@@ -1,4 +1,4 @@
-package com.dingtalk.spring.boot;
+package io.github.easy4j.dingtalk.spring.boot.autoconfigure.properties;
 
 import java.util.List;
 
