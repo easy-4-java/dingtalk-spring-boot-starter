@@ -15,6 +15,9 @@
  */
 package com.dingtalk.spring.boot;
 
+import com.dingtalk.api.DefaultDingTalkClient;
+import com.dingtalk.api.DingTalkClient;
+
 /**
  */
 public abstract class DingTalkOperations {
@@ -31,6 +34,10 @@ public abstract class DingTalkOperations {
 
 	public DingTalkOperations(DingTalkTemplate template) {
 		this.template = template;
+	}
+
+	protected DingTalkClient client(String url) {
+		return new DefaultDingTalkClient(url);
 	}
 
 }

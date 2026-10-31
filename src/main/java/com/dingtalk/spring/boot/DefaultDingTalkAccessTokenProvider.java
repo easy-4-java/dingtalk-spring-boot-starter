@@ -19,6 +19,10 @@ public class DefaultDingTalkAccessTokenProvider implements DingTalkAccessTokenPr
         this.dingTalkConfigProvider = dingTalkConfigProvider;
     }
 
+    protected DingTalkClient client(String url) {
+        return new DefaultDingTalkClient(url);
+    }
+
     @Override
     public String getAccessToken(String corpId, String appKey) throws ApiException {
 
@@ -30,7 +34,7 @@ public class DefaultDingTalkAccessTokenProvider implements DingTalkAccessTokenPr
         request.setAppsecret(appSecret);
         request.setHttpMethod(METHOD_GET);
 
-        DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/gettoken");
+        DingTalkClient client = client(DINGTALK_SERVICE + "/gettoken");
         OapiGettokenResponse response = client.execute(request);
 
         if (response.isSuccess()) {
@@ -50,7 +54,7 @@ public class DefaultDingTalkAccessTokenProvider implements DingTalkAccessTokenPr
         request.setAppsecret(appSecret);
         request.setHttpMethod(METHOD_GET);
 
-        DingTalkClient client = new DefaultDingTalkClient(DINGTALK_SERVICE + "/sns/gettoken");
+        DingTalkClient client = client(DINGTALK_SERVICE + "/sns/gettoken");
 
         OapiSnsGettokenResponse response = client.execute(request);
 
