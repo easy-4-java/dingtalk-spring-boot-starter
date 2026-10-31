@@ -82,7 +82,7 @@ public class DingTalkRobotOperations extends DingTalkOperations {
 				card.setText(msg.getText());
 				card.setHideAvatar(msg.getHideAvatar().getValue());
 				card.setBtnOrientation(msg.getBtnOrientation().getValue());
-				if (msg.isButtonView() && msg.getButtons().size() == 1) {
+				if (!msg.isButtonView() && msg.getButtons().size() == 1) {
 					card.setSingleTitle(msg.getButtons().get(0).getTitle());
 					card.setSingleURL(msg.getButtons().get(0).getActionURL());
 				} else {
