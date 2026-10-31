@@ -4,6 +4,8 @@ import com.dingtalk.api.request.OapiRobotSendRequest;
 import com.dingtalk.api.response.OapiRobotSendResponse;
 import com.dingtalk.spring.boot.bean.*;
 import com.dingtalk.spring.boot.property.DingTalkRobotProperties;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -15,6 +17,36 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 class DingTalkRobotTest {
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Test
+    void actionCardUsesWholeCardForDefaultAndExplicitFalseAndButtonsForTrue() throws Exception {
+        DingTalkRobotOperations robot = new DingTalkRobotOperations(null);
+        ActionCardButton button = new ActionCardButton("open", "https://action.test");
+
+        ActionCardMessage defaultLayout = new ActionCardMessage("title", "body", button);
+        assertWholeCard(robot, defaultLayout);
+
+        ActionCardMessage explicitWholeCard = new ActionCardMessage("title", "body", button);
+        explicitWholeCard.setButtonView(false);
+        assertWholeCard(robot, explicitWholeCard);
+
+        ActionCardMessage independentButton = new ActionCardMessage("title", "body", button);
+        independentButton.setButtonView(true);
+        JsonNode independentPayload = objectMapper.readTree(robot.buidRequest(independentButton).getActionCard());
+        assertEquals("open", independentPayload.path("btns").path(0).path("title").asText());
+        assertEquals("https://action.test", independentPayload.path("btns").path(0).path("actionURL").asText());
+        assertFalse(independentPayload.has("singleTitle"));
+        assertFalse(independentPayload.has("singleURL"));
+    }
+
+    private void assertWholeCard(DingTalkRobotOperations robot, ActionCardMessage message) throws Exception {
+        JsonNode payload = objectMapper.readTree(robot.buidRequest(message).getActionCard());
+        assertEquals("open", payload.path("singleTitle").asText());
+        assertEquals("https://action.test", payload.path("singleURL").asText());
+        assertFalse(payload.has("btns"));
+    }
+
     @Test
     void buildsTextMarkdownLinkAndCardsForSdk() {
         DingTalkRobotOperations robot = new DingTalkRobotOperations(null);
