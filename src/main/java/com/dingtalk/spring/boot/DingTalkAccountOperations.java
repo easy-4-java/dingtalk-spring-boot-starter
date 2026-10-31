@@ -50,7 +50,7 @@ public class DingTalkAccountOperations extends DingTalkOperations {
 	 * @throws ApiException if Api request Exception
 	 */
 	public OapiUserGetuserinfoResponse getUserinfoBycode( String code, String accessToken) throws ApiException {
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/user/getuserinfo");
+		DingTalkClient client = client(PREFIX + "/user/getuserinfo");
 		OapiUserGetuserinfoRequest request = new OapiUserGetuserinfoRequest();
 		request.setCode(code);
 		request.setHttpMethod(METHOD_GET);
@@ -69,7 +69,7 @@ public class DingTalkAccountOperations extends DingTalkOperations {
 	 */
 	public OapiUserGetUseridByUnionidResponse getUseridByUnionid( String unionid, String accessToken) throws ApiException {
 		
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/user/getUseridByUnionid");
+		DingTalkClient client = client(PREFIX + "/user/getUseridByUnionid");
 		OapiUserGetUseridByUnionidRequest request = new OapiUserGetUseridByUnionidRequest();
 		request.setUnionid(unionid);
 		request.setHttpMethod(METHOD_GET);
@@ -87,7 +87,7 @@ public class DingTalkAccountOperations extends DingTalkOperations {
 	 */
 	public OapiUserGetResponse getUserByUserid( String userid, String accessToken) throws ApiException {
 		
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/user/get");
+		DingTalkClient client = client(PREFIX + "/user/get");
 		OapiUserGetRequest request = new OapiUserGetRequest();
 		request.setUserid(userid);
 		request.setHttpMethod(METHOD_GET);
