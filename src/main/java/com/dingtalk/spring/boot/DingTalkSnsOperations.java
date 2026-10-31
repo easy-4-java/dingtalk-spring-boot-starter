@@ -45,7 +45,7 @@ public class DingTalkSnsOperations extends DingTalkOperations {
 	 * @throws ApiException if Api request Exception
 	 */
 	public OapiSnsGetuserinfoBycodeResponse getUserinfoByTmpCode( String tmp_auth_code, String accessKey, String accessSecret) throws ApiException {
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/sns/getuserinfo_bycode");
+		DingTalkClient client = client(PREFIX + "/sns/getuserinfo_bycode");
 		OapiSnsGetuserinfoBycodeRequest request = new OapiSnsGetuserinfoBycodeRequest();
 		request.setTmpAuthCode(tmp_auth_code);
 		return client.execute(request, accessKey, accessSecret);
@@ -59,7 +59,7 @@ public class DingTalkSnsOperations extends DingTalkOperations {
 	 * @throws ApiException if Api request Exception
 	 */
 	public String getPersistentCode(String tmp_auth_code, String accessToken) throws ApiException  {
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/sns/get_persistent_code");
+		DingTalkClient client = client(PREFIX + "/sns/get_persistent_code");
 		OapiSnsGetPersistentCodeRequest request = new OapiSnsGetPersistentCodeRequest();
 		request.setTmpAuthCode(tmp_auth_code);
 		OapiSnsGetPersistentCodeResponse response = client.execute(request, accessToken);
@@ -75,7 +75,7 @@ public class DingTalkSnsOperations extends DingTalkOperations {
 	 * @return
 	 */
 	public String getSnsToken(String openId, String persistentCode, String accessToken) throws ApiException {
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/sns/get_sns_token");
+		DingTalkClient client = client(PREFIX + "/sns/get_sns_token");
 		OapiSnsGetSnsTokenRequest request = new OapiSnsGetSnsTokenRequest();
 		request.setOpenid(openId);
 		request.setPersistentCode(persistentCode);
@@ -90,7 +90,7 @@ public class DingTalkSnsOperations extends DingTalkOperations {
 	 * @return
 	 */
 	public String getUserinfo(String snsToken) throws ApiException{
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/sns/getuserinfo");
+		DingTalkClient client = client(PREFIX + "/sns/getuserinfo");
 		OapiSnsGetuserinfoRequest request = new OapiSnsGetuserinfoRequest();
 		request.setSnsToken(snsToken);
 		request.setHttpMethod(METHOD_GET);
