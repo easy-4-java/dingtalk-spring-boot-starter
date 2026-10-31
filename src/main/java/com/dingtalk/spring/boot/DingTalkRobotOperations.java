@@ -16,6 +16,7 @@
 package com.dingtalk.spring.boot;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.dingtalk.api.DefaultDingTalkClient;
@@ -55,7 +56,7 @@ public class DingTalkRobotOperations extends DingTalkOperations {
 
     public String getUserMobile(String access_token, String userid,  String lang) {
         try {
-            DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/topapi/v2/user/get");
+            DingTalkClient client = client(PREFIX + "/topapi/v2/user/get");
             OapiV2UserGetRequest req = new OapiV2UserGetRequest();
             req.setUserid(userid);
             req.setLanguage(lang);
@@ -75,16 +76,60 @@ public class DingTalkRobotOperations extends DingTalkOperations {
 
 		switch (message.getMsgtype()) {
 			case actionCard:{
-
+				ActionCardMessage msg = (ActionCardMessage) message;
+				OapiRobotSendRequest.Actioncard card = new OapiRobotSendRequest.Actioncard();
+				card.setTitle(msg.getTitle());
+				card.setText(msg.getText());
+				card.setHideAvatar(msg.getHideAvatar().getValue());
+				card.setBtnOrientation(msg.getBtnOrientation().getValue());
+				if (!msg.isButtonView() && msg.getButtons().size() == 1) {
+					card.setSingleTitle(msg.getButtons().get(0).getTitle());
+					card.setSingleURL(msg.getButtons().get(0).getActionURL());
+				} else {
+					List<OapiRobotSendRequest.Btns> buttons = new ArrayList<>();
+					for (ActionCardButton button : msg.getButtons()) {
+						OapiRobotSendRequest.Btns item = new OapiRobotSendRequest.Btns();
+						item.setTitle(button.getTitle());
+						item.setActionURL(button.getActionURL());
+						buttons.add(item);
+					}
+					card.setBtns(buttons);
+				}
+				request.setActionCard(card);
 			};break;
 			case feedCard:{
-
+				FeedCardMessage msg = (FeedCardMessage) message;
+				OapiRobotSendRequest.Feedcard card = new OapiRobotSendRequest.Feedcard();
+				List<OapiRobotSendRequest.Links> links = new ArrayList<>();
+				for (FeedCardMessageItem item : msg.getFeedCardItems()) {
+					OapiRobotSendRequest.Links link = new OapiRobotSendRequest.Links();
+					link.setTitle(item.getTitle());
+					link.setMessageURL(item.getMessageURL());
+					link.setPicURL(item.getPicURL());
+					links.add(link);
+				}
+				card.setLinks(links);
+				request.setFeedCard(card);
 			};break;
 			case link:{
-
+				LinkMessage msg = (LinkMessage) message;
+				OapiRobotSendRequest.Link link = new OapiRobotSendRequest.Link();
+				link.setTitle(msg.getTitle());
+				link.setText(msg.getText());
+				link.setMessageUrl(msg.getMessageUrl());
+				link.setPicUrl(msg.getPicUrl());
+				request.setLink(link);
 			};break;
 			case markdown:{
-
+				MarkdownMessage msg = (MarkdownMessage) message;
+				OapiRobotSendRequest.Markdown markdown = new OapiRobotSendRequest.Markdown();
+				markdown.setTitle(msg.getTitle());
+				markdown.setText(msg.getText());
+				request.setMarkdown(markdown);
+				OapiRobotSendRequest.At at = new OapiRobotSendRequest.At();
+				if (ArrayUtils.isNotEmpty(msg.getAtMobiles())) at.setAtMobiles(Arrays.asList(msg.getAtMobiles()));
+				at.setIsAtAll(msg.getIsAtAll());
+				request.setAt(at);
 			};break;
 			case text:{
 
@@ -113,7 +158,7 @@ public class DingTalkRobotOperations extends DingTalkOperations {
 
     public OapiRobotSendResponse sendMessage(String corpId, String robotId, OapiRobotSendRequest request) throws ApiException {
   		Long timestamp = System.currentTimeMillis();
-  		DingTalkClient client = new DefaultDingTalkClient(this.getWebhook(corpId, robotId, timestamp));
+		DingTalkClient client = client(this.getWebhook(corpId, robotId, timestamp));
   		request.setTimestamp(timestamp);
   		return client.execute(request);
   	}
@@ -254,7 +299,7 @@ public class DingTalkRobotOperations extends DingTalkOperations {
         String sign =  template.getSign(secret, timestamp);
         StringBuilder serverUrl = new StringBuilder(webhook).append("&timestamp=").append(timestamp).append("&sign=").append(sign);
 
-		DingTalkClient client = new DefaultDingTalkClient(serverUrl.toString());
+		DingTalkClient client = client(serverUrl.toString());
 		request.setTimestamp(timestamp);
 		return client.execute(request);
 	}

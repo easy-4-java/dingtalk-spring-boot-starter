@@ -31,7 +31,7 @@ public class DingTalkSsoOperations extends DingTalkOperations {
 	 * @throws ApiException if Api request Exception 
 	 */
 	public OapiSnsGetuserinfoBycodeResponse getUserinfoByTmpCode( String tmp_auth_code, String accessKey, String accessSecret) throws ApiException {
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/sns/getuserinfo_bycode");
+		DingTalkClient client = client(PREFIX + "/sns/getuserinfo_bycode");
 		OapiSnsGetuserinfoBycodeRequest request = new OapiSnsGetuserinfoBycodeRequest();
 		request.setTmpAuthCode(tmp_auth_code);
 		return client.execute(request, accessKey, accessSecret);
@@ -45,7 +45,7 @@ public class DingTalkSsoOperations extends DingTalkOperations {
 	 * @throws ApiException if Api request Exception 
 	 */
 	public String getPersistentCode(String tmp_auth_code, String accessToken) throws ApiException  {
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/sns/get_persistent_code");
+		DingTalkClient client = client(PREFIX + "/sns/get_persistent_code");
 		OapiSnsGetPersistentCodeRequest request = new OapiSnsGetPersistentCodeRequest();
 		request.setTmpAuthCode(tmp_auth_code);
 		OapiSnsGetPersistentCodeResponse response = client.execute(request, accessToken);

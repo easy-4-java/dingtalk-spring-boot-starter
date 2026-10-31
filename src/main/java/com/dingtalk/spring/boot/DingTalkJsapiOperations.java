@@ -16,6 +16,7 @@
 package com.dingtalk.spring.boot;
 
 import com.dingtalk.api.DefaultDingTalkClient;
+import com.dingtalk.api.DingTalkClient;
 import com.dingtalk.api.request.OapiGetJsapiTicketRequest;
 import com.dingtalk.api.response.OapiGetJsapiTicketResponse;
 import com.dingtalk.spring.boot.bean.JsapiTicketSignature;
@@ -27,7 +28,7 @@ import com.taobao.api.ApiException;
  */
 public class DingTalkJsapiOperations extends DingTalkOperations {
 
-	DefaultDingTalkClient client = new DefaultDingTalkClient(PREFIX + "/get_jsapi_ticket");
+	DingTalkClient client = new DefaultDingTalkClient(PREFIX + "/get_jsapi_ticket");
 	
 	public DingTalkJsapiOperations(DingTalkTemplate template) {
 		super(template);
