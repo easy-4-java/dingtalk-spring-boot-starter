@@ -36,7 +36,7 @@ public class DingTalkUserOperations extends DingTalkOperations {
 	 * @throws ApiException if Api request Exception
 	 */
 	public OapiUserGetuserinfoResponse getUserinfoByCode(String code, String accessToken) throws ApiException {
-		DingTalkClient client = new DefaultDingTalkClient(PREFIX + "user/getuserinfo");
+		DingTalkClient client = client(PREFIX + "user/getuserinfo");
 		OapiUserGetuserinfoRequest request = new OapiUserGetuserinfoRequest();
 		request.setCode(code);
 		return client.execute(request, accessToken);
