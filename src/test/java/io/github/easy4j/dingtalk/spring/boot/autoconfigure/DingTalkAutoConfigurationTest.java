@@ -1,5 +1,9 @@
 package io.github.easy4j.dingtalk.spring.boot.autoconfigure;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
 import io.github.easy4j.dingtalk.config.DingTalkConfig;
 import io.github.easy4j.dingtalk.config.DingTalkConfigProvider;
 import io.github.easy4j.dingtalk.config.DingTalkCorpAppConfig;
@@ -21,6 +25,7 @@ import io.github.easy4j.dingtalk.service.impl.DefaultDingTalkService;
 import io.github.easy4j.dingtalk.spring.boot.autoconfigure.properties.DingTalkProperties;
 import io.github.easy4j.dingtalk.storage.DingTalkConfigStorage;
 import org.junit.jupiter.api.Test;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
@@ -35,6 +40,30 @@ class DingTalkAutoConfigurationTest {
 
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
             .withConfiguration(AutoConfigurations.of(DingTalkAutoConfiguration.class));
+
+    @Test
+    void debugConfigurationLogReportsMappedValues() {
+        Logger logger = (Logger) LoggerFactory.getLogger(DingTalkAutoConfiguration.class);
+        Level previous = logger.getLevel();
+        ListAppender<ILoggingEvent> events = new ListAppender<>();
+        events.start();
+        logger.addAppender(events);
+        logger.setLevel(Level.DEBUG);
+        try {
+            DingTalkProperties properties = new DingTalkProperties();
+            properties.setCorpId("configured-corp");
+            DingTalkConfig config = new DingTalkAutoConfiguration().dingTalkConfig(properties);
+            assertThat(config.getCorpId()).isEqualTo("configured-corp");
+            assertThat(events.list)
+                    .extracting(ILoggingEvent::getFormattedMessage)
+                    .anySatisfy(message -> assertThat(message)
+                            .contains("corpId=configured-corp", "apps=0", "robots=0"));
+        } finally {
+            logger.setLevel(previous);
+            logger.detachAppender(events);
+            events.stop();
+        }
+    }
 
     @Test
     void autoConfiguration_oneServiceOneStorageFacade() {
